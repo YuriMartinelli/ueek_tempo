@@ -9,6 +9,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  dynamic previsao;
+
+  @override
+  void initState() {
+    super.initState();
+    ConsultarApi();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +39,7 @@ class _HomePageState extends State<HomePage> {
                 Image.asset('assets/images/Logo_ueek.png'),
               ]),
               Container(height: 50),
-              const Card(
+              Card(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Padding(
@@ -39,7 +47,20 @@ class _HomePageState extends State<HomePage> {
                         EdgeInsets.only(top: 50, bottom: 50, left: 0, right: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [Text("Temperatura"), Text("Numvenzinha")],
+                      children: [
+                        // Verificando se previsao foi inicializada antes de acessá-la
+                        Text(
+                          previsao != null ? previsao['temp'].toString() : "",
+                          style:
+                              TextStyle(fontSize: 27, color: Colors.blueAccent),
+                        ),
+                        Text(
+                          previsao != null
+                              ? previsao['condicao'].toString()
+                              : "",
+                          style: TextStyle(fontSize: 27),
+                        )
+                      ],
                     ),
                   ),
                 ),
@@ -50,9 +71,8 @@ class _HomePageState extends State<HomePage> {
                 width: 375,
                 height: 97,
                 child: ElevatedButton(
-                    onPressed: (){
-                      var teste = Api_tempo().fetch();
-                      print(teste);
+                    onPressed: () async {
+                      await ConsultarApi();
                     },
                     style: ButtonStyle(
                       shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
@@ -70,5 +90,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
+  Future<Object> ConsultarApi() async {
+    var fetchedData = await Api_tempo().fetch();
+    setState(() {
+      previsao = fetchedData;
+    });
+    return fetchedData;
+  }
 }
