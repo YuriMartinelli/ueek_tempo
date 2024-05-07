@@ -8,22 +8,15 @@ class Api_tempo {
     var permissao = await Permission.location.status;
 
     if (permissao.isGranted) {
-      Position position = await Geolocator.getCurrentPosition(
+      Position posicao = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      print(position);
-
       Uri url = Uri.https("api.open-meteo.com", "/v1/forecast", {
-        "latitude": position.latitude.toString(),
-        "longitude": position.longitude.toString(),
-        "current": "weather_code",
-        "hourly": "temperature_2m,weather_code",
-        "timezone": "auto",
-        "forecast_days": "1"
+        "latitude": posicao.latitude.toString(),
+        "longitude": posicao.longitude.toString(),
+        "current": "temperature_2m,weather_code"
       });
-
-      print(url);
 
       var response = await http.get(url);
 
@@ -44,34 +37,16 @@ class Api_tempo {
 
   Object TratarJson(var jsonOld) {
     var jsonDecodificado = json.decode(jsonOld);
-    var datas = jsonDecodificado["hourly"];
-    var codigo_clima = jsonDecodificado["current"]["weather_code"];
 
-    var datas_temps = [];
+    var temperatura = jsonDecodificado['current']['temperature_2m'];
 
-    for (var element in datas["time"]) {
-      for (var temp in datas["temperature_2m"]) {
-        datas_temps
-            .add({"data": element, "temp": temp, "condicao": codigo_clima});
-      }
-    }
+    var codigo_clima = jsonDecodificado['current']['weather_code'];
 
-    var data_agora = DateTime.now();
+    Object previsao = {'temp': temperatura, 'condicao': codigo_clima};
 
-    var hora_certa_previsao = null;
+    previsao = DefinirClima(previsao);
 
-    for (var data in datas_temps) {
-      var diferenca = DateTime.parse(data["data"]).difference(data_agora).abs();
-
-      if (diferenca < Duration(hours: 4)) {
-        hora_certa_previsao = data;
-        break;
-      }
-    }
-
-    hora_certa_previsao = DefinirClima(hora_certa_previsao);
-
-    return hora_certa_previsao;
+    return previsao;
   }
 
   Object DefinirClima(var previsao) {
@@ -101,8 +76,6 @@ class Api_tempo {
     }
 
     previsao['path_clima'] = path;
-
-    print(previsao);
 
     return previsao;
   }
