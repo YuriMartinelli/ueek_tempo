@@ -61,11 +61,11 @@ class _HomePageState extends State<HomePage> {
                                     : "",
                                 style: TextStyle(
                                     fontSize: 27,
+                                    fontFamily: 'Sarabun',
                                     color: Color.fromRGBO(0, 191, 255, 1))),
                             Image.asset(previsao != null
                                 ? previsao['path_clima']
                                 : "assets/images/padrao.png"),
-                            // Image.asset(previsao['path_clima'])
                           ],
                         ),
                       ),
@@ -91,6 +91,7 @@ class _HomePageState extends State<HomePage> {
                         child: Text("Atualizar",
                             style: TextStyle(
                                 fontSize: 30,
+                                fontFamily: 'Sarabun',
                                 color: Color.fromRGBO(240, 240, 240, 1)))),
                   )
                 ],
