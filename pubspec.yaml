@@ -82,9 +82,6 @@ flutter:
     - family: Mukta
       fonts:
         - asset: fonts/Mukta/Mukta-Regular.ttf
-    - family: Sarabun
-      fonts:
-        - asset: fonts/Sarabun/Sarabun-Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
