@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<Object> ConsultarApi() async {
+  Future<Object?> ConsultarApi() async {
     var fetchedData = await Api_tempo().fetch();
 
     setState(() {

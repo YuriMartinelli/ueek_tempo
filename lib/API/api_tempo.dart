@@ -4,36 +4,40 @@ import 'dart:convert';
 import 'package:permission_handler/permission_handler.dart';
 
 class Api_tempo {
-  Future<Object> fetch() async {
-    var permissao = await Permission.location.status;
-
-    if (permissao.isGranted) {
-      Position posicao = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      Uri url = Uri.https("api.open-meteo.com", "/v1/forecast", {
-        "latitude": posicao.latitude.toString(),
-        "longitude": posicao.longitude.toString(),
-        "current": "temperature_2m,weather_code"
-      });
-
-      var response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        var previsao = TratarJson(response.body);
-
-        return previsao;
-      } else {
-        print("Falhou a requisição: ${response.reasonPhrase}");
-      }
-    } else {
-      if (permissao.isDenied) {
-        await Permission.location.request();
-      }
-    }
-    return [];
+Future<Object?> fetch() async {
+  var permissionStatus = await Permission.location.request();
+  
+  if (permissionStatus.isDenied) {
+    // A permissão foi negada pelo usuário
+    print("Permissão de localização negada pelo usuário.");
+    return null;
   }
+  
+  var permissao = await Permission.location.status;
+
+  if (permissao.isGranted) {
+    Position posicao = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    Uri url = Uri.https("api.open-meteo.com", "/v1/forecast", {
+      "latitude": posicao.latitude.toString(),
+      "longitude": posicao.longitude.toString(),
+      "current": "temperature_2m,weather_code"
+    });
+
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var previsao = TratarJson(response.body);
+      return previsao;
+    } else {
+      print("Falhou a requisição: ${response.reasonPhrase}");
+    }
+  }
+  return null;
+}
+
 
   Object TratarJson(var jsonOld) {
     var jsonDecodificado = json.decode(jsonOld);
