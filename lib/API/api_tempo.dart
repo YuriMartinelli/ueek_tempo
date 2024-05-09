@@ -8,7 +8,6 @@ Future<Object?> fetch() async {
   var permissionStatus = await Permission.location.request();
   
   if (permissionStatus.isDenied) {
-    // A permissão foi negada pelo usuário
     print("Permissão de localização negada pelo usuário.");
     return null;
   }
